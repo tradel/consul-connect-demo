@@ -21,6 +21,8 @@ systemctl daemon-reload
 systemctl enable consul
 systemctl restart consul
 
+sleep 5
+
 consul intention create -deny '*' '*'
 consul intention create -allow admin mysql
 consul intention create -allow site mysql

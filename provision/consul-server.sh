@@ -20,11 +20,10 @@ sed -e "s/@@BIND_ADDR@@/${ipaddr}/" < /vagrant/consul/server.json.tmpl > /etc/co
 systemctl daemon-reload
 systemctl enable consul
 systemctl restart consul
-
 sleep 5
 
-consul intention create -deny '*' '*'
-consul intention create -allow admin mysql
-consul intention create -allow site mysql
-consul intention create -allow proxy admin
-consul intention create -allow proxy site
+consul intention create -deny '*' '*' || true
+consul intention create -allow admin mysql || true
+consul intention create -allow site mysql || true
+consul intention create -allow proxy admin || true
+consul intention create -allow proxy site || true

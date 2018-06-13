@@ -66,13 +66,13 @@ Vagrant.configure("2") do |config|
     m.vm.box = UBUNTU_BOX
     m.vm.provider "virtualbox" do |vb|
       vb.name = "admin"
-      vb.memory = 2048
+      vb.memory = 1024
       vb.customize [ "guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold", 1000 ]
       vb.linked_clone = true
     end
     m.vm.provider "parallels" do |p|
       p.name = "admin"
-      p.memory = 2048
+      p.memory = 1024
       p.linked_clone = true
     end
     m.vm.network "private_network", ip: box_ip
@@ -91,13 +91,13 @@ Vagrant.configure("2") do |config|
       m.vm.box = UBUNTU_BOX
       m.vm.provider "virtualbox" do |vb|
         vb.name = nodename
-        vb.memory = 2048
+        vb.memory = 1024
         vb.customize [ "guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold", 1000 ]
         vb.linked_clone = true
       end
       m.vm.provider "parallels" do |p|
         p.name = nodename
-        p.memory = 2048
+        p.memory = 1024
         p.linked_clone = true
       end
       m.vm.network "private_network", ip: box_ip
@@ -118,13 +118,13 @@ Vagrant.configure("2") do |config|
     m.vm.box = UBUNTU_BOX
     m.vm.provider "virtualbox" do |vb|
       vb.name = "proxy"
-      vb.memory = 1024
+      vb.memory = 512
       vb.customize [ "guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold", 1000 ]
       vb.linked_clone = true
     end
     m.vm.provider "parallels" do |p|
       p.name = "proxy"
-      p.memory = 1024
+      p.memory = 512
       p.linked_clone = true
     end
     m.vm.network "private_network", ip: box_ip

@@ -48,7 +48,7 @@ unzip -o /vagrant/consul-template_*_linux_amd64.zip -d /tmp
 install -c -m 0755 /tmp/consul-template /usr/local/sbin
 install -d -m 0755 -o vagrant /etc/consul-template /etc/consul-template/templates
 install -c -m 0644 /vagrant/templates/common-shared.properties.ctmpl /etc/consul-template/templates
-sed -e "s/@@ROOT_TOKEN@@/${root_token}/" < /vagrant/templates/consul-template.hcl.tmpl > /etc/consul-template/consul-template.hcl
+sed -e "s/@@ROOT_TOKEN@@/${root_token}/" < /vagrant/templates/bcl-templates.hcl.tmpl > /etc/consul-template/consul-template.hcl
 /usr/local/sbin/consul-template -config /etc/consul-template/consul-template.hcl -once
 
 

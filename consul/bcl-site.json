@@ -1,0 +1,29 @@
+{
+  "service": {
+    "name": "site",
+    "tags": [
+      "site",
+      "broadleaf"
+    ],
+    "port": 8443,
+    "check": {
+      "id": "site-https-check",
+      "name": "Check ecommerce site with https",
+      "http": "https://localhost:8443/",
+      "tls_skip_verify": true,
+      "method": "GET",
+      "interval": "10s",
+      "timeout": "1s"
+    },
+    "connect": {
+      "proxy": {
+        "config": {
+          "upstreams": [{
+            "destination_name": "mysql",
+            "local_bind_port": 3306
+          }]
+        }
+      }
+    }
+  }
+}

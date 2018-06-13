@@ -1,0 +1,28 @@
+{
+  "service": {
+    "name": "admin",
+    "tags": [
+      "admin", "broadleaf"
+    ],
+    "port": 8444,
+    "check": {
+      "id": "admin-https-check",
+      "name": "Check admin site with https",
+      "http": "https://localhost:8444/admin/login",
+      "tls_skip_verify": true,
+      "method": "GET",
+      "interval": "10s",
+      "timeout": "1s"
+    },
+    "connect": {
+      "proxy": {
+        "config": {
+          "upstreams": [{
+            "destination_name": "mysql",
+            "local_bind_port": 3306
+          }]
+        }
+      }
+    }
+  }
+}

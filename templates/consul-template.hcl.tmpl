@@ -1,0 +1,16 @@
+consul {
+  address = "127.0.0.1:8500"
+}
+
+vault {
+  address = "http://consul0:8200"
+  token = "@@ROOT_TOKEN@@"
+  renew_token = false
+}
+
+template {
+  source = "/etc/consul-template/templates/common-shared.properties.ctmpl"
+  destination = "/home/vagrant/DemoSite/core/src/main/resources/runtime-properties/common-shared.properties"
+}
+
+log_level = "debug"

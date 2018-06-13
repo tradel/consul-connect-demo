@@ -1,0 +1,9 @@
+data/
+scripts/
+.vagrant/
+.DS_Store
+
+*.zip
+*.log
+
+vault-init.txt

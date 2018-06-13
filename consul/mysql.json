@@ -1,0 +1,17 @@
+{
+  "service": {
+    "name": "mysql",
+    "tags": [
+      "mysql"
+    ],
+    "port": 3306,
+    "check": {
+      "id": "mysql-nagios-check",
+      "name": "Connectivity check using Nagios plugin",
+      "args": ["/usr/lib/nagios/plugins/check_mysql", "-u", "broadleaf", "-p", "ech9Weith4Phei7W"],
+      "interval": "10s",
+      "timeout": "1s"
+    },
+    "connect": { "proxy": {} }
+  }
+}

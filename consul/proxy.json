@@ -1,0 +1,31 @@
+{
+  "service": {
+    "name": "nginx",
+    "tags": [
+      "web"
+    ],
+    "port": 443,
+    "check": {
+      "id": "site-https-check",
+      "name": "Check ecommerce site with https",
+      "http": "https://localhost/",
+      "tls_skip_verify": true,
+      "method": "GET",
+      "interval": "10s",
+      "timeout": "1s"
+    },
+    "connect": {
+      "proxy": {
+        "config": {
+          "upstreams": [{
+            "destination_name": "site",
+            "local_bind_port": 8443
+          }, {
+            "destination_name": "admin",
+            "local_bind_port": 8444
+          }]
+        }
+      }
+    }
+  }
+}

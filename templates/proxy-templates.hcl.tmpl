@@ -1,0 +1,17 @@
+consul {
+  address = "127.0.0.1:8500"
+}
+
+vault {
+  address = "http://consul0:8200"
+  token = "@@ROOT_TOKEN@@"
+  renew_token = false
+}
+
+template {
+  source = "/etc/consul-template/templates/proxy.nginx.ctmpl"
+  destination = "/etc/nginx/sites-available/proxy"
+  command = "systemctl restart nginx"
+}
+
+log_level = "debug"

@@ -1,0 +1,36 @@
+upstream site {
+    {{ range service "site" }}
+    server {{ .Address }}:{{ .Port }};
+    {{ end }}
+}
+
+upstream admin {
+    {{ range service "admin" }}
+    server {{ .Address }}:{{ .Port }};
+    {{ end }}
+}
+
+server {
+    listen 443 ssl;
+    server_name proxy;
+
+    ssl on;
+    ssl_certificate /etc/nginx/ssl/local-cert.pem;
+    ssl_certificate_key /etc/nginx/ssl/local-key.pem;
+
+    location /store/ {
+        proxy_pass https://site/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /admin/ {
+        proxy_pass https://admin/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}

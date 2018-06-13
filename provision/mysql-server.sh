@@ -30,7 +30,7 @@ systemctl restart consul
 
 debconf-set-selections <<< 'mysql-server mysql-server/root_password password abc123'
 debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password abc123'
-apt-get -y install mysql-server
+apt-get -y install mysql-server monitoring-plugins
 install -c -m 0644 /vagrant/mysql/mysqld.cnf /etc/mysql/mysql.conf.d
 
 systemctl enable mysql

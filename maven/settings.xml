@@ -1,0 +1,13 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd">
+  <proxies>
+   <proxy>
+      <id>squid-proxy</id>
+      <active>true</active>
+      <protocol>https</protocol>
+      <host>10.13.39.1</host>
+      <port>3128</port>
+      <nonProxyHosts>consul01|locahost|10.*|127.0.0.1</nonProxyHosts>
+    </proxy>
+  </proxies>
+</settings>

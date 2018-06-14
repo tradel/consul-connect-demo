@@ -20,16 +20,19 @@ install_consul_client "$ipaddr" "/vagrant/consul/proxy.json"
 #
 
 apt-get -y install nginx
-unlink /etc/nginx/sites-enabled/default
+ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled
 
-mkdir /etc/nginx/ssl
+install -d -m 0755 /etc/nginx/ssl
 install -c -m 0644 /vagrant/ssl/*.pem /etc/nginx/ssl
 
 #
 # Install consul-template
 #
 
-root_token=$(get_root_token)
-install_consul_template "$root_token" "/vagrant/templates/proxy-templates.hcl.tmpl"
-install -c -m 0644 /vagrant/templates/proxy.nginx.ctmpl /etc/consul-template/templates
+# root_token=$(get_root_token)
+# install_consul_template "$root_token" "/vagrant/templates/proxy-templates.hcl.tmpl"
+# install -c -m 0644 /vagrant/templates/proxy.nginx.ctmpl /etc/consul-template/templates
 # run_consul_template_once
+install -c -m 0644 /vagrant/nginx/proxy.nginx /etc/nginx/sites-available
+ln -sf /etc/nginx/sites-available/proxy.nginx /etc/nginx/sites-enabled
+systemctl restart nginx

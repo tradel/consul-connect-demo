@@ -1,5 +1,8 @@
 #!/bin/bash
 
+. /vagrant/provision/func/proxy.sh
+. /vagrant/provision/func/consul.sh
+
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
 
@@ -10,38 +13,27 @@ root_token=$(awk '{ if (match($0,/Initial Root Token: (.*)/,m)) print m[1] }' /v
 # Install Consul agent
 #
 
-cd /tmp
-apt-get -y install unzip
-unzip -o /vagrant/consul_*_linux_amd64.zip -d /tmp
-install -c -m 0755 /tmp/consul /usr/local/sbin
-install -c -m 0644 /vagrant/provision/consul.service /etc/systemd/system
-install -d -m 0755 -o vagrant /data/consul /etc/consul.d
-install -c -m 0644 /vagrant/consul/mysql.json /etc/consul.d
-sed -e "s/@@BIND_ADDR@@/${ipaddr}/" < /vagrant/consul/client.json.tmpl > /etc/consul.d/config.json
-
-systemctl daemon-reload
-systemctl enable consul
-systemctl restart consul
-
+install_consul_client "$ipaddr" /vagrant/consul/mysql.json
 
 #
 # Install MySQL server
 #
+export MYSQL_PWD="abc123"
 
-debconf-set-selections <<< 'mysql-server mysql-server/root_password password abc123'
-debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password abc123'
+debconf-set-selections <<< "mysql-server mysql-server/root_password password ${MYSQL_PWD}"
+debconf-set-selections <<< "mysql-server mysql-server/root_password_again password ${MYSQL_PWD}"
 apt-get -y install mysql-server monitoring-plugins
 install -c -m 0644 /vagrant/mysql/mysqld.cnf /etc/mysql/mysql.conf.d
 
 systemctl enable mysql
 systemctl restart mysql
 
-mysql -u root -pabc123 -e "create user root@'%' identified by 'abc123'"
-mysql -u root -pabc123 -e "grant all privileges on *.* to root@'%' with grant option"
-mysql -u root -pabc123 -e "grant proxy on '@' to root@'%'"
+mysql -u root -e "create user if not exists root@'%' identified by 'abc123'"
+mysql -u root -e "grant all privileges on *.* to root@'%' with grant option"
+mysql -u root -e "grant proxy on '@' to root@'%'"
 
-mysql -u root -pabc123 -e "create database broadleaf"
-mysql -u root -pabc123 -e "create user broadleaf@'%' identified by 'ech9Weith4Phei7W'"
-mysql -u root -pabc123 -e "grant all privileges on broadleaf.* to broadleaf@'%'"
+mysql -u root -e "create database if not exists broadleaf"
+mysql -u root -e "create user if not exists broadleaf@'%' identified by 'ech9Weith4Phei7W'"
+mysql -u root -e "grant all privileges on broadleaf.* to broadleaf@'%'"
 
-mysql -u root -pabc123 -e "flush privileges"
+mysql -u root -e "flush privileges"

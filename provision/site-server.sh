@@ -1,35 +1,27 @@
 #!/bin/bash
 
+. /vagrant/provision/func/proxy.sh
+. /vagrant/provision/func/consul.sh
+. /vagrant/provision/func/vault.sh
+. /vagrant/provision/func/consul-template.sh
+
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
 
+#
+# Install Consul client
+#
+
 ipaddr="$1"
-root_token=$(awk '{ if (match($0,/Initial Root Token: (.*)/,m)) print m[1] }' /vagrant/vault-init.txt)
-
-#
-# Install Consul agent
-#
-
-cd /tmp
-apt-get -y install unzip
-unzip -o /vagrant/consul_*_linux_amd64.zip -d /tmp
-install -c -m 0755 /tmp/consul /usr/local/sbin
-install -c -m 0644 /vagrant/provision/consul.service /etc/systemd/system
-install -d -m 0755 -o vagrant /data/consul /etc/consul.d
-install -c -m 0644 /vagrant/consul/bcl-site.json /etc/consul.d
-sed -e "s/@@BIND_ADDR@@/${ipaddr}/" < /vagrant/consul/client.json.tmpl > /etc/consul.d/config.json
-
-systemctl daemon-reload
-systemctl enable consul
-systemctl restart consul
-
+install_consul_client "$ipaddr" "/vagrant/consul/bcl-site.json"
 
 #
 # Install Java and Maven
 #
 
 apt-get -y install default-jdk maven
-
+install -d -m 0755 $HOME/.m2
+install -c -m 0644 /vagrant/maven/settings.xml $HOME/.m2/settings.xml
 
 #
 # Clone Broadleaf
@@ -37,20 +29,19 @@ apt-get -y install default-jdk maven
 
 cd $HOME
 apt-get -y install git
-git clone https://github.com/tradel/DemoSite.git
 
+if [ ! -d ./DemoSite ]; then
+  git clone https://github.com/tradel/DemoSite.git
+fi
 
 #
 # Install consul-template
 #
 
-unzip -o /vagrant/consul-template_*_linux_amd64.zip -d /tmp
-install -c -m 0755 /tmp/consul-template /usr/local/sbin
-install -d -m 0755 -o vagrant /etc/consul-template /etc/consul-template/templates
+root_token=$(get_root_token)
+install_consul_template "$root_token" "/vagrant/templates/bcl-templates.hcl.tmpl"
 install -c -m 0644 /vagrant/templates/common-shared.properties.ctmpl /etc/consul-template/templates
-sed -e "s/@@ROOT_TOKEN@@/${root_token}/" < /vagrant/templates/bcl-templates.hcl.tmpl > /etc/consul-template/consul-template.hcl
-/usr/local/sbin/consul-template -config /etc/consul-template/consul-template.hcl -once
-
+run_consul_template_once
 
 #
 # Install and start Broadleaf
@@ -59,7 +50,7 @@ sed -e "s/@@ROOT_TOKEN@@/${root_token}/" < /vagrant/templates/bcl-templates.hcl.
 pkill java
 
 cd $HOME/DemoSite
-mvn install
+mvn install || exit 1
 
 cd $HOME/DemoSite/site
-nohup mvn spring-boot:run &
+nohup mvn spring-boot:run >> $HOME/site.log &

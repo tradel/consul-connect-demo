@@ -4,6 +4,7 @@ Requires=network-online.target
 After=network-online.target
 
 [Service]
+User=vagrant
 Restart=on-failure
 ExecStart=/usr/local/sbin/vault server -config /etc/vault.d/
 ExecReload=/bin/kill -HUP $MAINPID

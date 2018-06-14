@@ -18,8 +18,9 @@ server {
     ssl_certificate /etc/nginx/ssl/local-cert.pem;
     ssl_certificate_key /etc/nginx/ssl/local-key.pem;
 
-    location /store/ {
+    location / {
         proxy_pass https://site/;
+        proxy_redirect https://site/ https://$host/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -27,7 +28,8 @@ server {
     }
 
     location /admin/ {
-        proxy_pass https://admin/;
+        proxy_pass https://admin/admin/;
+        proxy_redirect https://admin/admin/ https://$host/admin/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
